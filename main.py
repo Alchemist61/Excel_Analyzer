@@ -18,21 +18,24 @@ def load_excel_file():
 
 
 def choose_column(df):
-    print(" Available columns:")
-    for col in df.columns:
+    # Filter only numeric columns
+    numeric_cols = [col for col in df.columns if pd.api.types.is_numeric_dtype(df[col])]
+
+    if not numeric_cols:
+        print(" No numeric columns available to analyze.")
+        exit()
+
+    print(" Available numeric columns:")
+    for col in numeric_cols:
         print(f" - {col}")
     print()
 
     while True:
         col_name = input("Which numeric column would you like to analyze? ").strip()
-        if col_name in df.columns:
-            if pd.api.types.is_numeric_dtype(df[col_name]):
-                return col_name
-            else:
-                print(" Selected column is not numeric. Please choose another.\n")
+        if col_name in numeric_cols:
+            return col_name
         else:
-            print("  Column not found. Try again.\n")
-
+            print(" Invalid selection. Please choose one of the numeric columns above.\n")
 
 def compute_statistics(series):
     mean = round(series.mean(), 2)
@@ -40,7 +43,6 @@ def compute_statistics(series):
     std_dev = round(series.std(), 2)
 
     return mean, median, std_dev
-
 
 def display_histogram(series):
     print("\n  Histogram (ASCII):")
